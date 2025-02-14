@@ -46,5 +46,5 @@ Color Print: ₹5 per page
 
 Contact
 
-For any queries, contact via WhatsApp.
+For any queries, contact via email: 2k23.cs2312307@gmail.com
 
