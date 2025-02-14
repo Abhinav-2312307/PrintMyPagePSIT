@@ -3,10 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="icon" type="image/png" href="public/assets/icon.jpg">
     <title>PrintMyPage - Professional Printing Services</title>
+    <link rel="icon" type="image/png" href="assets/icon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <style>
+        .profile-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: 1px solid #404040;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .profile-btn:hover {
+            
+            background: #00ff88;
+            color: #1a1a1a;
+        }
+        .price-card:hover {
+            background: #00f2ff;
+            /* display: flex; */
+            background: linear-gradient(135deg, #00ff88 10%, #00f2ff 100%);
+            color: #1a1a1a;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -117,43 +145,6 @@
             outline: none;
         }
 
-        /* File Upload */
-        .file-upload {
-            border: 2px dashed #404040;
-            padding: 2rem;
-            text-align: center;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-            transition: border-color 0.3s;
-        }
-
-        .file-upload:hover {
-            border-color: #00ff88;
-        }
-
-        /* Profile Button */
-        .profile-btn {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: #2d2d2d;
-            color: #ffffff;
-            padding: 0.8rem 1.2rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            border: 1px solid #404040;
-            z-index: 1000;
-            transition: all 0.3s;
-        }
-
-        .profile-btn:hover {
-            background: #00ff88;
-            color: #1a1a1a;
-        }
-
         /* Order Button */
         .order-btn {
             background: linear-gradient(45deg, #00ff88, #00a3ff);
@@ -190,6 +181,19 @@
                 font-size: 2.5rem;
             }
         }
+
+        /* Contact Section */
+        .contact-section {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid #333333;
+            margin-top: 2rem;
+        }
+
+        .contact-info {
+            margin-top: 1rem;
+        }
     </style>
     <script>
         function generateOrderID() {
@@ -208,15 +212,23 @@
                 year: document.querySelector('input[name="year"]').value,
                 rollNumber: document.querySelector('input[name="rollNumber"]').value,
                 printType: document.querySelector('select[name="printType"]').value,
-                pages: document.querySelector('input[name="pages"]').value,
-                file: document.querySelector('input[name="file"]').files[0]?.name || 'No file attached'
+                pages: parseInt(document.querySelector('input[name="pages"]').value, 10),
             };
+
+            // Check if the total number of pages exceeds 200
+            if (formData.pages > 200) {
+                alert("The total number of pages cannot exceed 200.");
+                return; // Stop the form submission
+            }
 
             const orderID = generateOrderID();
             const whatsappNumber = '919793404007'; // Your WhatsApp number with country code
             
             // Calculate total price
-            const pricePerPage = formData.printType === 'bw' ? 2.5 : 5;
+            const pricePerPage = formData.printType === 'bw' ? 2.5 :
+                                 formData.printType === 'color' ? 5 :
+                                 formData.printType === 'glossy' ? 15 :
+                                 1.5; // A4 sheet 70GSM
             const totalPrice = (pricePerPage * formData.pages).toFixed(2);
 
             const message = `*New Print Order* 🖨️\n\n` +
@@ -229,8 +241,7 @@
                 `*Print Type:* ${formData.printType.toUpperCase()}\n` +
                 `*Number of Pages:* ${formData.pages}\n` +
                 `*Total Price:* ₹${totalPrice}\n` +
-                `*File Name:* ${formData.file}\n\n` +
-                `Please attach the file and confirm order.`;
+                `Please attach the file and confirm order. and wait for approval to do payment `;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
@@ -249,13 +260,20 @@
         // Initialize form submission
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.order-form').addEventListener('submit', submitOrder);
+        });
+
+        window.addEventListener('scroll', () => {
+            const welcomeSection = document.querySelector('.welcome-section');
+            const mainContent = document.querySelector('.main-content');
+            let scrollPos = window.scrollY;
             
-            // File input handler
-            document.getElementById('fileInput').addEventListener('change', function(e) {
-                const fileName = document.getElementById('fileName');
-                fileName.textContent = e.target.files[0].name;
-                fileName.style.color = '#00ff88';
-            });
+            welcomeSection.style.opacity = 1 - scrollPos / 300;
+            
+            if (scrollPos > 100) {
+                mainContent.classList.add('visible');
+            } else {
+                mainContent.classList.remove('visible');
+            }
         });
     </script>
 </head>
@@ -283,6 +301,14 @@
                 <div class="price-card">
                     <h3>Color Print</h3>
                     <p>₹5 per page</p>
+                </div>
+                <div class="price-card">
+                    <h3>Glossy Print</h3>
+                    <p>₹15 per page</p>
+                </div>
+                <div class="price-card">
+                    <h3>A4 Sheet (70GSM)</h3>
+                    <p>₹1.5 per page</p>
                 </div>
             </div>
         </section>
@@ -320,36 +346,21 @@
                 <select name="printType" required>
                     <option value="bw">Black & White (₹2.5/page)</option>
                     <option value="color">Color (₹5/page)</option>
+                    <option value="glossy">Glossy (₹15/page)</option>
+                    <option value="a4">A4 Sheet (70GSM) (₹1.5/page)</option>
                 </select>
             </div>
-
-            <div class="file-upload">
-                <input type="file" id="fileInput" name="file" hidden required accept=".pdf,.doc,.docx">
-                <label for="fileInput" style="cursor: pointer;">
-                    Click to Upload File (PDF/DOC)
-                </label>
-                <span id="fileName"></span>
-                <p id="fileName" style="margin-top: 0.5rem; color: #888;"></p>
-            </div>
-    
+            <br>
             <button type="submit" class="order-btn">Place Order via WhatsApp</button>
         </form>
-    </div>
 
-    <script>
-        window.addEventListener('scroll', () => {
-            const welcomeSection = document.querySelector('.welcome-section');
-            const mainContent = document.querySelector('.main-content');
-            let scrollPos = window.scrollY;
-            
-            welcomeSection.style.opacity = 1 - scrollPos / 300;
-            
-            if (scrollPos > 100) {
-                mainContent.classList.add('visible');
-            } else {
-                mainContent.classList.remove('visible');
-            }
-        });
-    </script>
+        <section class="contact-section">
+            <h2>Contact Us</h2>
+            <div class="contact-info">
+                <p><strong>Name:</strong> Abhinav Sahu </p> <p><strong>class:</strong> AA37 CSE</p>
+                <p><strong>Email:</strong> <a href="mailto:2k23.cs2312307@gmail.com" style="color: #00ff88;">2k23.cs2312307@gmail.com</a></p>
+            </div>
+        </section>
+    </div>
 </body>
 </html>
