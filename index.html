@@ -199,53 +199,56 @@
         }
 
         function submitOrder(event) {
-            event.preventDefault();
-            
-            const formData = {
-                name: document.querySelector('input[name="name"]').value,
-                className: document.querySelector('input[name="class"]').value,
-                section: document.querySelector('input[name="section"]').value,
-                year: document.querySelector('input[name="year"]').value,
-                rollNumber: document.querySelector('input[name="rollNumber"]').value,
-                printType: document.querySelector('select[name="printType"]').value,
-                pages: document.querySelector('input[name="pages"]').value,
-                // file: document.querySelector('input[name="file"]').files[0]?.name || 'No file attached'
-            };
+        event.preventDefault();
+        
+        const formData = {
+            name: document.querySelector('input[name="name"]').value,
+            className: document.querySelector('input[name="class"]').value,
+            section: document.querySelector('input[name="section"]').value,
+            year: document.querySelector('input[name="year"]').value,
+            rollNumber: document.querySelector('input[name="rollNumber"]').value,
+            printType: document.querySelector('select[name="printType"]').value,
+            pages: parseInt(document.querySelector('input[name="pages"]').value, 10),
+        };
 
-            const orderID = generateOrderID();
-            const whatsappNumber = '919793404007'; // Your WhatsApp number with country code
-            
-            // Calculate total price
-            const pricePerPage = formData.printType === 'bw' ? 2.5 : 5;
-            const totalPrice = (pricePerPage * formData.pages).toFixed(2);
-
-            const message = `*New Print Order* 🖨️\n\n` +
-                `*Order ID:* ${orderID}\n` +
-                `*Name:* ${formData.name}\n` +
-                `*Class:* ${formData.className}\n` +
-                `*Section:* ${formData.section}\n` +
-                `*Year:* ${formData.year}\n` +
-                `*Roll Number:* ${formData.rollNumber}\n` +
-                `*Print Type:* ${formData.printType.toUpperCase()}\n` +
-                `*Number of Pages:* ${formData.pages}\n` +
-                `*Total Price:* ₹${totalPrice}\n` +
-                // `*File Name:* ${formData.file}\n\n` +
-                `Please attach the file and confirm order.`;
-
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-            
-            // Open WhatsApp link in a new tab
-            window.open(whatsappURL, '_blank');
-            
-            // Reset form after submission
-            event.target.reset();
-            document.getElementById('fileName').textContent = '';
-            
-            // Show confirmation message
-            alert(`Order ID ${orderID} generated!\nPlease send your file via WhatsApp to complete the order.`);
+        // Check if the total number of pages exceeds 200
+        if (formData.pages > 200) {
+            alert("The total number of pages cannot exceed 200.");
+            return; // Stop the form submission
         }
 
+        const orderID = generateOrderID();
+        const whatsappNumber = '919793404007'; // Your WhatsApp number with country code
+        
+        // Calculate total price
+        const pricePerPage = formData.printType === 'bw' ? 2.5 : 5;
+        const totalPrice = (pricePerPage * formData.pages).toFixed(2);
+
+        const message = `*New Print Order* 🖨️\n\n` +
+            `*Order ID:* ${orderID}\n` +
+            `*Name:* ${formData.name}\n` +
+            `*Class:* ${formData.className}\n` +
+            `*Section:* ${formData.section}\n` +
+            `*Year:* ${formData.year}\n` +
+            `*Roll Number:* ${formData.rollNumber}\n` +
+            `*Print Type:* ${formData.printType.toUpperCase()}\n` +
+            `*Number of Pages:* ${formData.pages}\n` +
+            `*Total Price:* ₹${totalPrice}\n` +
+            `Please attach the file and confirm order. and wait for approval to do payment `;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+        
+        // Open WhatsApp link in a new tab
+        window.open(whatsappURL, '_blank');
+        
+        // Reset form after submission
+        event.target.reset();
+        document.getElementById('fileName').textContent = '';
+        
+        // Show confirmation message
+        alert(`Order ID ${orderID} generated!\nPlease send your file via WhatsApp to complete the order.`);
+    }
         // Initialize form submission
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.order-form').addEventListener('submit', submitOrder);
