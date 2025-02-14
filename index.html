@@ -209,7 +209,7 @@
                 rollNumber: document.querySelector('input[name="rollNumber"]').value,
                 printType: document.querySelector('select[name="printType"]').value,
                 pages: document.querySelector('input[name="pages"]').value,
-                file: document.querySelector('input[name="file"]').files[0]?.name || 'No file attached'
+                // file: document.querySelector('input[name="file"]').files[0]?.name || 'No file attached'
             };
 
             const orderID = generateOrderID();
@@ -229,7 +229,7 @@
                 `*Print Type:* ${formData.printType.toUpperCase()}\n` +
                 `*Number of Pages:* ${formData.pages}\n` +
                 `*Total Price:* ₹${totalPrice}\n` +
-                `*File Name:* ${formData.file}\n\n` +
+                // `*File Name:* ${formData.file}\n\n` +
                 `Please attach the file and confirm order.`;
 
             const encodedMessage = encodeURIComponent(message);
@@ -322,17 +322,19 @@
                     <option value="color">Color (₹5/page)</option>
                 </select>
             </div>
+            <div><br></div>
 
-            <div class="file-upload">
+            <!-- <div class="file-upload">
                 <input type="file" id="fileInput" name="file" hidden required accept=".pdf,.doc,.docx">
                 <label for="fileInput" style="cursor: pointer;">
                     Click to Upload File (PDF/DOC)
                 </label>
                 <span id="fileName"></span>
                 <p id="fileName" style="margin-top: 0.5rem; color: #888;"></p>
-            </div>
+            </div> -->
     
             <button type="submit" class="order-btn">Place Order via WhatsApp</button>
+            
         </form>
     </div>
 
