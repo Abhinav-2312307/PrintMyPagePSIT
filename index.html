@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintMyPage - Professional Printing Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0f0f0f;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+            transition: opacity 1s ease-out;
+        }
+
+        .welcome-text {
+            font-size: 4rem;
+            text-align: center;
+            background: linear-gradient(45deg, #00ff88, #00a3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: float 3s ease-in-out infinite;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Main Content */
+        .main-content {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 1px solid #333333;
+        }
+
+        .price-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .price-card {
+            padding: 1.5rem;
+            border-radius: 10px;
+            background: #2d2d2d;
+            border: 1px solid #404040;
+        }
+
+        /* Form Styles */
+        .order-form {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid #333333;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        input, select {
+            padding: 0.8rem;
+            background: #2d2d2d;
+            border: 1px solid #404040;
+            color: #ffffff;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #00ff88;
+            outline: none;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #404040;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #00ff88;
+        }
+
+        /* Profile Button */
+        .profile-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: 1px solid #404040;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .profile-btn:hover {
+            background: #00ff88;
+            color: #1a1a1a;
+        }
+
+        /* Order Button */
+        .order-btn {
+            background: linear-gradient(45deg, #00ff88, #00a3ff);
+            color: #1a1a1a;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .order-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .price-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-text {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+    <script>
+        function generateOrderID() {
+            const timestamp = Date.now().toString(36);
+            const randomStr = Math.random().toString(36).substr(2, 5);
+            return `ORDER-${timestamp}-${randomStr}`.toUpperCase();
+        }
+
+        function submitOrder(event) {
+            event.preventDefault();
+            
+            const formData = {
+                name: document.querySelector('input[name="name"]').value,
+                className: document.querySelector('input[name="class"]').value,
+                section: document.querySelector('input[name="section"]').value,
+                year: document.querySelector('input[name="year"]').value,
+                rollNumber: document.querySelector('input[name="rollNumber"]').value,
+                printType: document.querySelector('select[name="printType"]').value,
+                pages: document.querySelector('input[name="pages"]').value,
+                file: document.querySelector('input[name="file"]').files[0]?.name || 'No file attached'
+            };
+
+            const orderID = generateOrderID();
+            const whatsappNumber = '919793404007'; // Your WhatsApp number with country code
+            
+            // Calculate total price
+            const pricePerPage = formData.printType === 'bw' ? 2.5 : 5;
+            const totalPrice = (pricePerPage * formData.pages).toFixed(2);
+
+            const message = `*New Print Order* 🖨️\n\n` +
+                `*Order ID:* ${orderID}\n` +
+                `*Name:* ${formData.name}\n` +
+                `*Class:* ${formData.className}\n` +
+                `*Section:* ${formData.section}\n` +
+                `*Year:* ${formData.year}\n` +
+                `*Roll Number:* ${formData.rollNumber}\n` +
+                `*Print Type:* ${formData.printType.toUpperCase()}\n` +
+                `*Number of Pages:* ${formData.pages}\n` +
+                `*Total Price:* ₹${totalPrice}\n` +
+                `*File Name:* ${formData.file}\n\n` +
+                `Please attach the file and confirm order.`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+            
+            // Open WhatsApp link in a new tab
+            window.open(whatsappURL, '_blank');
+            
+            // Reset form after submission
+            event.target.reset();
+            document.getElementById('fileName').textContent = '';
+            
+            // Show confirmation message
+            alert(`Order ID ${orderID} generated!\nPlease send your file via WhatsApp to complete the order.`);
+        }
+
+        // Initialize form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.order-form').addEventListener('submit', submitOrder);
+            
+            // File input handler
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const fileName = document.getElementById('fileName');
+                fileName.textContent = e.target.files[0].name;
+                fileName.style.color = '#00ff88';
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="profile-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        Profile
+    </div>
+
+    <div class="welcome-section">
+        <h1 class="welcome-text">Welcome to PrintMyPage</h1>
+    </div>
+
+    <div class="main-content">
+        <section class="pricing-section">
+            <h2>Printing Rates</h2>
+            <div class="price-cards">
+                <div class="price-card">
+                    <h3>Black & White</h3>
+                    <p>₹2.5 per page</p>
+                </div>
+                <div class="price-card">
+                    <h3>Color Print</h3>
+                    <p>₹5 per page</p>
+                </div>
+            </div>
+        </section>
+
+        <form class="order-form">
+            <h2>Place Your Order</h2>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="input-group">
+                    <label>Branch</label>
+                    <input type="text" name="class" required>
+                </div>
+                <div class="input-group">
+                    <label>Section</label>
+                    <input type="text" name="section" required>
+                </div>
+                <div class="input-group">
+                    <label>Academic Year</label>
+                    <input type="number" name="year" required>
+                </div>
+                <div class="input-group">
+                    <label>Roll Number</label>
+                    <input type="text" name="rollNumber" required>
+                </div>
+                <div class="input-group">
+                    <label>Number of Pages</label>
+                    <input type="number" name="pages" required min="1">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Print Type</label>
+                <select name="printType" required>
+                    <option value="bw">Black & White (₹2.5/page)</option>
+                    <option value="color">Color (₹5/page)</option>
+                </select>
+            </div>
+
+            <div class="file-upload">
+                <input type="file" id="fileInput" name="file" hidden required accept=".pdf,.doc,.docx">
+                <label for="fileInput" style="cursor: pointer;">
+                    Click to Upload File (PDF/DOC)
+                </label>
+                <span id="fileName"></span>
+                <p id="fileName" style="margin-top: 0.5rem; color: #888;"></p>
+            </div>
+    
+            <button type="submit" class="order-btn">Place Order via WhatsApp</button>
+        </form>
+    </div>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const welcomeSection = document.querySelector('.welcome-section');
+            const mainContent = document.querySelector('.main-content');
+            let scrollPos = window.scrollY;
+            
+            welcomeSection.style.opacity = 1 - scrollPos / 300;
+            
+            if (scrollPos > 100) {
+                mainContent.classList.add('visible');
+            } else {
+                mainContent.classList.remove('visible');
+            }
+        });
+    </script>
+</body>
+</html>
