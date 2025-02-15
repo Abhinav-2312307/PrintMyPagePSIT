@@ -285,14 +285,147 @@
             }
         });
     </script>
+    <style>
+        .instructions-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+        
+        .instructions-btn {
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: 1px solid #404040;
+            transition: all 0.3s;
+        }
+        
+        .instructions-btn:hover {
+            background: #00ff88;
+            color: #1a1a1a;
+        }
+        
+        .instructions-btn svg {
+            transition: transform 0.3s ease;
+        }
+        
+        .instructions-content {
+            display: none;
+            padding: 1rem;
+            margin-top: 10px;
+            background: #2d2d2d;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: absolute;
+            right: 0;
+            min-width: 280px;
+            border: 1px solid #404040;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            transform-origin: top right;
+            animation: scaleUp 0.2s ease-out;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .instructions-content ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .instructions-content li {
+            padding: 0.6rem;
+            margin: 0.2rem 0;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .instructions-content li:hover {
+            background: #3d3d3d;
+        }
+
+        .instructions-content li::before {
+            content: '•';
+            color: #00ff88;
+            position: absolute;
+            left: 0.5rem;
+            font-weight: bold;
+        }
+
+        .instructions-content strong {
+            color: #00ff88;
+            font-weight: 500;
+        }
+
+        .instructions-content::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            right: 1rem;
+            border-width: 8px;
+            border-style: solid;
+            border-color: transparent transparent #2d2d2d transparent;
+            filter: drop-shadow(0 -2px 1px rgba(0,0,0,0.1));
+        }
+        
+        .instructions-container.active .instructions-content {
+            display: block;
+        }
+        
+        .instructions-container.active .instructions-btn svg {
+            transform: rotate(180deg);
+        }
+        </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Use event delegation for dynamic elements
+                document.body.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.instructions-btn');
+                    const container = btn ? btn.closest('.instructions-container') : null;
+                    
+                    if (btn) {
+                        container.classList.toggle('active');
+                        e.stopPropagation();
+                    } else {
+                        document.querySelectorAll('.instructions-container').forEach(c => {
+                            c.classList.remove('active');
+                        });
+                    }
+                });
+            });
+            </script>
 </head>
 <body>
-    <div class="profile-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-        Profile
+    <div class="instructions-container">
+        <div class="instructions-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Instructions
+        </div>
+        <div class="instructions-content">
+            <ul>
+                <li>1. Fill the form with ur details </li>
+                <li>2. Attach the file manually in WhatsApp with the text</li>
+                <li>3. Ensure files are in PDF / docs format or image is in jpg/jpeg/png format </li>
+                <li>4. Wait for order request to get accepted then do the payment via upi </li>
+                <li>5. collect ur hardcopy within 1-2 days from AA37 </li>
+            </ul>
+        </div>
     </div>
 
     <div class="welcome-section">
