@@ -15,6 +15,7 @@
     <title>PrintMyPage - Professional Printing Services</title>
     <link rel="icon" type="image/png" href="public/assets/icon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    
     <style>
         .profile-btn {
             position: fixed;
@@ -234,11 +235,21 @@
             const whatsappNumber = '919793404007'; // Your WhatsApp number with country code
             
             // Calculate total price
-            const pricePerPage = formData.printType === 'bw' ? 2.5 :
+            const pricePerPage = formData.printType === 'bw' ? 2 :
                                  formData.printType === 'color' ? 5 :
                                  formData.printType === 'glossy' ? 15 :
                                  1.5; // A4 sheet 70GSM
-            const totalPrice = (pricePerPage * formData.pages).toFixed(2);
+            let totalPrice = (pricePerPage * formData.pages).toFixed(2);
+            totalPrice = parseFloat(totalPrice); // Convert string to number
+            
+            if (totalPrice > 200) {
+                totalPrice -= totalPrice * 25 / 100;
+            } else if (totalPrice > 100) {
+                totalPrice -= totalPrice * 20 / 100;
+            } else if (totalPrice > 50) {
+                totalPrice -= totalPrice * 5 / 100;
+            }
+
 
             const message = `*New Print Order* 🖨️\n\n` +
                 `*Order ID:* ${orderID}\n` +
@@ -407,6 +418,7 @@
                 });
             });
             </script>
+    
 </head>
 <body>
     <div class="instructions-container">
@@ -424,6 +436,12 @@
                 <li>3. Ensure files are in PDF / docs format or image is in jpg/jpeg/png format </li>
                 <li>4. Wait for order request to get accepted then do the payment via upi </li>
                 <li>5. collect ur hardcopy within 1-2 days from AA37 </li>
+                <li> <h4>Discount </h4>
+                    <ul> <li>25% on order above ₹200</li>
+                        <li>20% on order above ₹100</li>
+                        <li>5% on order above ₹50</li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
@@ -438,7 +456,7 @@
             <div class="price-cards">
                 <div class="price-card">
                     <h3>Black & White</h3>
-                    <p>₹2.5 per page</p>
+                    <p>₹2 per page</p>
                 </div>
                 <div class="price-card">
                     <h3>Color Print</h3>
@@ -486,7 +504,7 @@
             <div class="input-group">
                 <label>Print Type</label>
                 <select name="printType" required>
-                    <option value="bw">Black & White (₹2.5/page)</option>
+                    <option value="bw">Black & White (₹2/page)</option>
                     <option value="color">Color (₹5/page)</option>
                     <option value="glossy">Glossy (₹15/page)</option>
                     <option value="a4">A4 Sheet (70GSM) (₹1.5/page)</option>
@@ -504,5 +522,6 @@
             </div>
         </section>
     </div>
+    
 </body>
 </html>
