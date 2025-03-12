@@ -205,6 +205,43 @@
             margin-top: 1rem;
         }
     </style>
+    <style>
+        .server-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+    
+        .server-list {
+            background: #2d2d2d;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+    
+        .server-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #404040;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+    
+        .server-item:hover {
+            background: #00ff88;
+            color: #1a1a1a;
+            transform: translateX(10px);
+        }
+    </style>
     <script>
         function generateOrderID() {
             const timestamp = Date.now().toString(36);
@@ -293,6 +330,94 @@
                 mainContent.classList.add('visible');
             } else {
                 mainContent.classList.remove('visible');
+            }
+        });
+    </script>
+    <script>
+        const servers = [
+            { name: "Abhinav Sahu", code: "AA37", number: "919793404007" },
+            { name: "Adarsh", code: "AA37", number: "91XXXXXXXXXX" }
+            // Add more servers here
+        ];
+    
+        function showServerModal(formData) {
+            const modal = document.getElementById('serverModal');
+            const serverList = modal.querySelector('.server-list');
+            
+            // Clear existing items
+            serverList.innerHTML = '<h3 style="margin-bottom: 1.5rem;">Select Server</h3>';
+            
+            // Add server items
+            servers.forEach(server => {
+                const serverItem = document.createElement('div');
+                serverItem.className = 'server-item';
+                serverItem.innerHTML = `${server.name} - ${server.code}`;
+                serverItem.onclick = () => sendWhatsAppMessage(server.number, formData);
+                serverList.appendChild(serverItem);
+            });
+    
+            modal.style.display = 'flex';
+        }
+    
+        function sendWhatsAppMessage(number, formData) {
+            const orderID = generateOrderID();
+            
+            // Calculate total price
+            const pricePerPage = {
+                bw: 2.5,
+                color: 5,
+                glossy: 15,
+                a4_70gsm: 1
+            }[formData.printType];
+            
+            const totalPrice = (pricePerPage * formData.pages).toFixed(2);
+    
+            const message = `*New Print Order* 🖨️\n\n` +
+                `*Order ID:* ${orderID}\n` +
+                `*Name:* ${formData.name}\n` +
+                `*Branch:* ${formData.className}\n` +
+                `*Section:* ${formData.section}\n` +
+                `*Year:* ${formData.year}\n` +
+                `*Roll Number:* ${formData.rollNumber}\n` +
+                `*Print Type:* ${formData.printType.toUpperCase()}\n` +
+                `*Pages:* ${formData.pages}\n` +
+                `*Total Price:* ₹${totalPrice}\n\n` +
+                `Please attach file and confirm order.`;
+    
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${number}?text=${encodedMessage}`;
+            
+            window.open(whatsappURL, '_blank');
+            document.getElementById('serverModal').style.display = 'none';
+            alert(`Order ID ${orderID} generated!\nPlease send file via WhatsApp to complete.`);
+        }
+    
+        // Modified submitOrder function
+        function submitOrder(event) {
+            event.preventDefault();
+            
+            const formData = {
+                name: document.querySelector('input[name="name"]').value,
+                className: document.querySelector('input[name="class"]').value,
+                section: document.querySelector('input[name="section"]').value,
+                year: document.querySelector('input[name="year"]').value,
+                rollNumber: document.querySelector('input[name="rollNumber"]').value,
+                printType: document.querySelector('select[name="printType"]').value,
+                pages: parseInt(document.querySelector('input[name="pages"]').value, 10),
+            };
+    
+            if (formData.pages > 200) {
+                alert("Maximum 200 pages allowed!");
+                return;
+            }
+    
+            showServerModal(formData);
+        }
+    
+        // Close modal when clicking outside
+        document.getElementById('serverModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('serverModal')) {
+                document.getElementById('serverModal').style.display = 'none';
             }
         });
     </script>
@@ -418,6 +543,46 @@
                 });
             });
             </script>
+            <style>
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .close-btn {
+        font-size: 2rem;
+        cursor: pointer;
+        padding: 0 10px;
+        transition: color 0.3s;
+    }
+
+    .close-btn:hover {
+        color: #00ff88;
+    }
+</style>
+
+<!-- Update JavaScript -->
+<script>
+    function closeServerModal() {
+        document.getElementById('serverModal').style.display = 'none';
+    }
+
+    // Existing code
+    function showServerModal(formData) {
+        const modal = document.getElementById('serverModal');
+        modal.style.display = 'flex';
+        // ... rest of your existing code ...
+    }
+
+    // Close when clicking outside modal
+    document.getElementById('serverModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('serverModal')) {
+            closeServerModal();
+        }
+    });
+</script>
     
 </head>
 <body>
@@ -512,6 +677,17 @@
             </div>
             <br>
             <button type="submit" class="order-btn">Place Order via WhatsApp</button>
+            <div class="server-modal" id="serverModal">
+                <div class="server-list">
+                    <div class="modal-header">
+                        <h3>Select Server compatible with u </h3>
+                        <span class="close-btn" onclick="closeServerModal()">&times;</span>
+                    </div>
+                    <div class="server-item" data-number="919793404007">Abhinav Sahu - AA37</div>
+                    <div class="server-item" data-number="917905617371">Abhay Singh - AA37</div>
+                </div>
+            </div>
+            
         </form>
 
         <section class="contact-section">
